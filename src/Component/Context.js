@@ -1,10 +1,9 @@
 import {  useContext, createContext } from 'react'
 const MyContext = createContext();
 function Aelem(props) {
-    let textValue = '我是A组件中的值，要修改B组件中的值'
     return (
         <div>
-            <button type='button' onClick={() => props.onPass(textValue)}>这是A组件</button>
+            <button type='button'>这是A组件</button>
         </div>
     )
 }
