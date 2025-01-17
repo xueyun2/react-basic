@@ -85,7 +85,8 @@ function App() {
 ## useRef() 函数
 
  使用 `useRef()` 函数可以获取到 `DOM` 元素的引用。
-
+ 获取到的`DOM`元素存在在`current`属性上
+ 
  ```jsx
 import { useRef } from 'react';
 const inputRef = useRef(null);
@@ -93,10 +94,7 @@ function App() {
     // 定义useRef 函数,等待DOM渲染完成后获取DOM元素的引用
     const inputRef = useRef(null);
     function handleClick() {
-        /**
-         * 获取到的DOM元素存在在current属性上
-         * 通过inputRef.current.focus() 可以调用DOM元素的获取焦点的方法
-         */
+        //通过inputRef.current.focus() 可以调用DOM元素的获取焦点的方法
         inputRef.current.focus();
     }
     return (
@@ -214,12 +212,12 @@ function App() {
 }
 ```
 
-`Context`跨层组件通信
+### Context 跨层组件通信
 
 ```jsx
-import {  useContext, createContext } from 'react'
+import { useState, useContext, createContext } from 'react'
 // 创建Context
-const MyContext = createContext();
+const MyContext = createContext('默认值');
 function Aelem(props) {
      //获取到Context的值
     const value = useContext(MyContext)
@@ -232,7 +230,6 @@ function Aelem(props) {
 function Belem(props) {
     //获取到Context的值
     const value = useContext(MyContext)
-
     return (
         <div>
             <h1>子组件获取刀Context值：{value}</h1>
@@ -242,12 +239,109 @@ function Belem(props) {
 
  function App() {
     // MyContext.Provider 是一个组件，它可以将值注入到子组件。
+    const [contextVal,setContextVal] = useState('我是MyContext中的值')
     return (
-        <MyContext.Provider value='我是MyContext中的值'>
+        <button @click="()=>setContextVal('我被修改了')">在顶层修改</button>
+        <MyContext.Provider value={contextVal}>
             <Aelem />
             <Belem />
         </MyContext.Provider>
 
+    )
+}
+```
+
+## react-redux状态管理库
+
+在多个组件都需要使用同一个状态时，可以使用`redux`状态管理库。
+
+> 这里需要安装`@reduxjs/toolkit`配合使用
+
+### 安装
+
+```shell
+npm install @reduxjs/toolkit react-redux
+```
+
+### 创建store
+
+创建`store`模块：`store/modules/counterStore`
+
+```jsx
+import { createSlice } from '@reduxjs/toolkit'
+const CounterStore = createSlice({
+    name: 'counter',
+    //创建一个状态
+    initialState: {
+        value: 0,
+    },
+    // 修改状态同步方法
+    reducers: {
+        increment: (state) => {
+            state.value += 1
+
+        },
+        decrement: (state) => {
+            state.value -= 1
+
+        },
+        addToValue: (state, actions) => {
+            state.value = actions.payload
+        }
+    }
+})
+// 按需导出{ increment, decrement }方法
+export const { increment, decrement, addToValue } = CounterStore.actions
+// 默认导出reducer
+export default CounterStore.reducer
+```
+
+将创建好`store`模块统一导入`index.js`由`configureStore`导出。
+路径：`store/index.js`
+
+```jsx
+import { configureStore } from '@reduxjs/toolkit'
+//导入子模块的reducer
+import counterReducer from './modules/counterStore'
+const store = configureStore({
+    reducer: {
+        counter: counterReducer
+    },
+})
+export default store
+```
+
+### 在入口文件中引入store
+
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import store from './store';
+import { Provider } from 'react-redux';
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+    <Provider store={store}>
+      <App />
+    </Provider>
+);
+```
+
+### 在组件中使用
+
+```jsx
+import { useSelector } from 'react-redux';
+import { increment, decrement, addToValue } from './store/modules/counterStore';
+function App(){
+    const value = useSelector((state) => state.counter.value);
+    return(
+    <div>
+        <button onClick={() => dispatch(increment())}>+</button>
+        计数器：{value}
+        <button onClick={() => dispatch(decrement())}>-</button>
+        {/* 传递参数： */}
+        <button onClick={() => dispatch(addToValue(100))}>传递参数:100</button>
+    </div>
     )
 }
 ```
