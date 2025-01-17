@@ -241,7 +241,7 @@ function Belem(props) {
     // MyContext.Provider 是一个组件，它可以将值注入到子组件。
     const [contextVal,setContextVal] = useState('我是MyContext中的值')
     return (
-        <button @click="()=>setContextVal('我被修改了')">在顶层修改</button>
+        <button onClick={()=>setContextVal('我被修改了')}>在顶层修改</button>
         <MyContext.Provider value={contextVal}>
             <Aelem />
             <Belem />
