@@ -3,7 +3,7 @@
 ## 创建项目
 
 ```shell
-npx create-react-app react-basic
+pnpm create vite antd-demo
 ```
 
 ## 基础语法
@@ -26,7 +26,7 @@ function App() {
         {/* 函数 */}
         {add(1, 2)}
         {/* 内联样式 */}
-        <div style={{ color: 'red' }}> 22222</div>
+        <div style={{ color: 'red' }}>22222</div>
         {/* 列表渲染 */}
         <ul>
         {list.map((item, index) => <li key={index}>{item.name}</li>)}
@@ -86,7 +86,7 @@ function App() {
 
  使用 `useRef()` 函数可以获取到 `DOM` 元素的引用。
  获取到的`DOM`元素存在在`current`属性上
- 
+
  ```jsx
 import { useRef } from 'react';
 const inputRef = useRef(null);
@@ -257,10 +257,10 @@ function Belem(props) {
 
 > 这里需要安装`@reduxjs/toolkit`配合使用
 
-### 安装
+### 安装react-redux
 
 ```shell
-npm install @reduxjs/toolkit react-redux
+pnpm install @reduxjs/toolkit react-redux
 ```
 
 ### 创建store
@@ -345,3 +345,11 @@ function App(){
     )
 }
 ```
+
+## 路由
+
+### 安装react-router-dom
+
+```shell
+pnpm install react-router-dom
+````
